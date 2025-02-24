@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #result {
+            margin-top: 10px;
+            text-align: left;
+            background: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        #addAnother {
+            display: none;
+            margin-top: 10px;
+            background-color: #007bff;
+        }
+        #addAnother:hover {
+            background-color: #0056b3;
+        }
+        #exit {
+            background-color: #dc3545;
+        }
+        #exit:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="libraryContainer">
+        <h2>Library Management System</h2>
+        <input type="text" id="title" placeholder="Enter book title">
+        <input type="text" id="author" placeholder="Enter author">
+        <input type="text" id="isbn" placeholder="Enter ISBN">
+        <button onclick="addBook()">Add Book</button>
+        <button id="addAnother" onclick="resetForm()">Add Another Book</button>
+        <input type="text" id="search" placeholder="Search by title or author">
+        <button onclick="searchBook()">Search Book</button>
+        <button id="exit" onclick="exitLibrary()">Exit</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        let library = [];
+
+        function addBook() {
+            let title = document.getElementById('title').value;
+            let author = document.getElementById('author').value;
+            let isbn = document.getElementById('isbn').value;
+            
+            if (title && author && isbn) {
+                library.push({ title, author, isbn });
+                document.getElementById('result').innerHTML = "Book added successfully!";
+                document.getElementById('addAnother').style.display = "block";
+            } else {
+                document.getElementById('result').innerHTML = "Please fill all fields.";
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('title').value = "";
+            document.getElementById('author').value = "";
+            document.getElementById('isbn').value = "";
+            document.getElementById('addAnother').style.display = "none";
+            document.getElementById('result').innerHTML = "";
+        }
+
+        function searchBook() {
+            let query = document.getElementById('search').value.toLowerCase();
+            let result = "";
+            
+            library.forEach(book => {
+                if (book.title.toLowerCase().includes(query) || book.author.toLowerCase().includes(query)) {
+                    result += `<p><strong>Title:</strong> ${book.title}<br>
+                               <strong>Author:</strong> ${book.author}<br>
+                               <strong>ISBN:</strong> ${book.isbn}</p>`;
+                }
+            });
+            
+            document.getElementById('result').innerHTML = result || "No matching books found.";
+        }
+
+        function exitLibrary() {
+            library = [];
+            document.getElementById('libraryContainer').innerHTML = "<h2>Library Closed</h2><p>All data has been cleared.</p>";
+        }
+    </script>
+</body>
+</html>
