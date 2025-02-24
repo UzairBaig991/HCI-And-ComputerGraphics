@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #taskList {
+            list-style: none;
+            padding: 0;
+        }
+        .task-item {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            cursor: grab;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .task-item.dragging {
+            opacity: 0.7;
+            background: #ffc107;
+            transform: scale(1.05);
+        }
+        .task-item.over {
+            background: #17a2b8;
+            color: white;
+        }
+        .task-item button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .task-item button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Task Manager</h2>
+        <input type="text" id="taskTitle" placeholder="Enter task title">
+        <input type="date" id="taskDeadline">
+        <button onclick="addTask()">Add Task</button>
+        <button onclick="saveTasks()">Save Tasks</button>
+        <button onclick="loadTasks()">Load Tasks</button>
+        <ul id="taskList"></ul>
+    </div>
+
+    <script>
+        let tasks = [];
+
+        function addTask() {
+            let title = document.getElementById('taskTitle').value;
+            let deadline = document.getElementById('taskDeadline').value;
+            
+            if (title && deadline) {
+                tasks.push({ title, deadline });
+                updateTaskList();
+                document.getElementById('taskTitle').value = "";
+                document.getElementById('taskDeadline').value = "";
+            }
+        }
+
+        function updateTaskList() {
+            let taskList = document.getElementById('taskList');
+            taskList.innerHTML = "";
+            tasks.forEach((task, index) => {
+                let li = document.createElement('li');
+                li.classList.add('task-item');
+                li.setAttribute('draggable', true);
+                li.dataset.index = index;
+                li.innerHTML = `${task.title} (Deadline: ${task.deadline}) <button onclick="deleteTask(${index})">Delete</button>`;
+                
+                li.addEventListener('dragstart', dragStart);
+                li.addEventListener('dragover', dragOver);
+                li.addEventListener('drop', drop);
+                li.addEventListener('dragend', dragEnd);
+                li.addEventListener('dragleave', dragLeave);
+                
+                taskList.appendChild(li);
+            });
+        }
+
+        function deleteTask(index) {
+            tasks.splice(index, 1);
+            updateTaskList();
+        }
+
+        function saveTasks() {
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        function loadTasks() {
+            let storedTasks = localStorage.getItem("tasks");
+            if (storedTasks) {
+                tasks = JSON.parse(storedTasks);
+                updateTaskList();
+            }
+        }
+
+        function dragStart(event) {
+            event.dataTransfer.setData("text/plain", event.target.dataset.index);
+            event.target.classList.add("dragging");
+        }
+
+        function dragOver(event) {
+            event.preventDefault();
+            event.target.classList.add("over");
+        }
+
+        function drop(event) {
+            event.preventDefault();
+            let fromIndex = event.dataTransfer.getData("text/plain");
+            let toIndex = event.target.dataset.index;
+            
+            if (fromIndex !== undefined && toIndex !== undefined) {
+                let movedTask = tasks.splice(fromIndex, 1)[0];
+                tasks.splice(toIndex, 0, movedTask);
+                updateTaskList();
+            }
+        }
+
+        function dragEnd(event) {
+            event.target.classList.remove("dragging");
+        }
+
+        function dragLeave(event) {
+            event.target.classList.remove("over");
+        }
+    </script>
+</body>
+</html>
