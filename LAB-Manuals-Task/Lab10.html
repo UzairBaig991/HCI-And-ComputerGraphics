@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Student Attendance App - Enhanced Prototype</title>
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              background-color: #f4f4f4;
+              margin: 0;
+              padding: 0;
+          }
+          .container {
+              max-width: 400px;
+              margin: 50px auto;
+              padding: 20px;
+              background: white;
+              border-radius: 8px;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          }
+          h2, h3 {
+              text-align: center;
+              margin-bottom: 20px;
+              color: #333;
+          }
+          input, button, select {
+              width: 100%;
+              padding: 10px;
+              margin: 10px 0;
+              border-radius: 4px;
+              border: 1px solid #ccc;
+              font-size: 16px;
+              box-sizing: border-box;
+          }
+          input:focus, button:focus, select:focus {
+              outline: none;
+              border-color: #007BFF;
+              box-shadow: 0 0 5px rgba(0,123,255,0.5);
+          }
+          button {
+              background-color: #007BFF;
+              color: white;
+              border: none;
+              cursor: pointer;
+              transition: background 0.3s;
+          }
+          button:hover {
+              background-color: #0056b3;
+          }
+          .logout-btn {
+              background-color: #e74c3c;
+          }
+          .logout-btn:hover {
+              background-color: #c0392b;
+          }
+          label {
+              font-weight: bold;
+          }
+          .attendance-list, .summary {
+              margin-top: 20px;
+          }
+          .student {
+              display: flex;
+              justify-content: space-between;
+              padding: 5px 0;
+              border-bottom: 1px solid #eee;
+          }
+          .student input[type="checkbox"] {
+              transform: scale(1.3);
+              cursor: pointer;
+          }
+          .hidden {
+              display: none;
+          }
+          .feedback {
+              text-align: center;
+              color: green;
+              font-weight: bold;
+              margin-top: 10px;
+          }
+          .info {
+              background: #eef6ff;
+              padding: 10px;
+              border-radius: 4px;
+              margin-bottom: 15px;
+          }
+          .info p {
+              margin: 5px 0;
+          }
+          .summary-box {
+              background: #f9f9f9;
+              padding: 15px;
+              border-radius: 8px;
+              text-align: center;
+          }
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <h2>Attendance App</h2>
+          <button class="logout-btn hidden" id="logoutBtn" onclick="logout()" aria-label="Logout Button">Logout</button>
+          <div id="loginScreen">
+              <label for="username">Username:</label>
+              <input type="text" id="username" placeholder="Enter your username" aria-label="Username">
+              <label for="password">Password:</label>
+              <input type="password" id="password" placeholder="Enter your password" aria-label="Password">
+              <button onclick="showAttendance()" aria-label="Login Button">Login</button>
+          </div>
+          <div class="attendance-list hidden" id="attendance">
+              <h3>Class: HCI - Batch 2022</h3>
+              <div class="info">
+                  <p><strong>Date:</strong> <span id="currentDate"></span></p>
+                  <p><strong>Day:</strong> <span id="currentDay"></span></p>
+                  <p><strong>Time:</strong> <span id="currentTime"></span></p>
+                  <p><strong>Class Duration:</strong> 10:00 AM - 11:00 AM</p>
+              </div>
+              <div class="student">
+                  <span>Ali Khan</span><input type="checkbox" id="ali" aria-label="Mark Ali Khan Present">
+              </div>
+              <div class="student">
+                  <span>Sara Ahmed</span><input type="checkbox" id="sara" aria-label="Mark Sara Ahmed Present">
+              </div>
+              <div class="student">
+                  <span>Bilal Shah</span><input type="checkbox" id="bilal" aria-label="Mark Bilal Shah Present">
+              </div>
+              <button onclick="submitAttendance()" style="margin-top: 20px;">Submit Attendance</button>
+              <button onclick="showSummary()" style="margin-top: 10px;">View Summary</button>
+              <div class="feedback" id="feedback"></div>
+          </div>
+          <div class="summary hidden" id="summary">
+              <h3>Attendance Summary</h3>
+              <div class="summary-box" id="summaryBox"></div>
+              <button onclick="backToAttendance()" style="margin-top: 20px;">Back to Class List</button>
+          </div>
+      </div>
+      <script>
+          function showAttendance() {
+              const username = document.getElementById('username').value.trim();
+              const password = document.getElementById('password').value.trim();
+              if (username && password) {
+                  document.getElementById('loginScreen').classList.add('hidden');
+                  document.getElementById('attendance').classList.remove('hidden');
+                  document.getElementById('logoutBtn').classList.remove('hidden');
+                  setDateTime();
+              } else {
+                  alert('Please enter both username and password.');
+              }
+          }
+
+          function setDateTime() {
+              const date = new Date();
+              const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+              document.getElementById('currentDate').textContent = date.toLocaleDateString();
+              document.getElementById('currentDay').textContent = date.toLocaleDateString(undefined, { weekday: 'long' });
+              document.getElementById('currentTime').textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          }
+
+          function submitAttendance() {
+              document.getElementById('feedback').innerText = 'Attendance submitted successfully!';
+          }
+
+          function showSummary() {
+              const ali = document.getElementById('ali').checked;
+              const sara = document.getElementById('sara').checked;
+              const bilal = document.getElementById('bilal').checked;
+              const total = 3;
+              const present = (ali ? 1 : 0) + (sara ? 1 : 0) + (bilal ? 1 : 0);
+              const absent = total - present;
+              document.getElementById('summaryBox').innerHTML = `
+                  <p><strong>Total Students:</strong> ${total}</p>
+                  <p><strong>Present:</strong> ${present}</p>
+                  <p><strong>Absent:</strong> ${absent}</p>
+              `;
+              document.getElementById('attendance').classList.add('hidden');
+              document.getElementById('summary').classList.remove('hidden');
+          }
+
+          function backToAttendance() {
+              document.getElementById('summary').classList.add('hidden');
+              document.getElementById('attendance').classList.remove('hidden');
+          }
+
+          function logout() {
+              document.getElementById('loginScreen').classList.remove('hidden');
+              document.getElementById('attendance').classList.add('hidden');
+              document.getElementById('summary').classList.add('hidden');
+              document.getElementById('logoutBtn').classList.add('hidden');
+              document.getElementById('username').value = '';
+              document.getElementById('password').value = '';
+              document.getElementById('feedback').innerText = '';
+          }
+      </script>
+  </body>
+  </html>

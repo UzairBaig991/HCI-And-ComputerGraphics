@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Facebook Search Redesign</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, #e6f0fa, #f0f4ff); /* Light gradient */
+            min-height: 100vh;
+            transition: background 0.5s;
+        }
+        body:hover {
+            background: linear-gradient(135deg, #d5e8f7, #e9f1fc); /* Softer gradient on hover */
+        }
+        .dark-mode {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+        }
+        .dark-mode:hover {
+            background: linear-gradient(135deg, #3b4e6b, #465c71);
+        }
+        .search-container {
+            width: 50%;
+            margin: 50px auto;
+            position: relative;
+        }
+        .search-bar {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #1877f2;
+            border-radius: 25px;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s;
+        }
+        .search-bar:focus {
+            box-shadow: 0 4px 15px rgba(24,119,242,0.4);
+            outline: none;
+        }
+        .loader {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1877f2;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        @keyframes spin {
+            0% { transform: translateY(-50%) rotate(0deg); }
+            100% { transform: translateY(-50%) rotate(360deg); }
+        }
+        .recent-searches {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1;
+        }
+        .dark-mode .recent-searches {
+            background: #333;
+            border-color: #555;
+        }
+        .recent-searches div {
+            padding: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .recent-searches div:hover {
+            background: #f0f0f0;
+            animation: fadeIn 0.3s ease;
+        }
+        .dark-mode .recent-searches div:hover {
+            background: #444;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .results {
+            margin-top: 20px;
+            width: 50%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .result {
+            padding: 15px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            margin: 5px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .dark-mode .result {
+            background: #444;
+            border-color: #666;
+            color: white;
+        }
+        .result:hover {
+            transform: scale(1.02);
+        }
+        .preview {
+            display: none;
+            position: absolute;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 2;
+            width: 200px;
+            left: 100%;
+            top: 0;
+        }
+        .dark-mode .preview {
+            background: #333;
+            color: white;
+        }
+        .clear-btn, .theme-toggle {
+            padding: 8px 15px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .clear-btn {
+            background: #e74c3c;
+            color: white;
+        }
+        .theme-toggle {
+            background: #3498db;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <input type="text" class="search-bar" id="searchInput" placeholder="Search for a person..." oninput="searchPeople()" onfocus="showRecentSearches()" onblur="hideRecentSearches()">
+        <span class="loader" id="loader"></span>
+        <button class="clear-btn" onclick="clearSearch()">Clear Search</button>
+        <button class="theme-toggle" onclick="toggleTheme()">Toggle Dark Mode</button>
+        <div class="recent-searches" id="recentSearches">
+            <div onclick="selectRecent('John Doe')">John Doe</div>
+            <div onclick="selectRecent('Jane Smith')">Jane Smith</div>
+            <div onclick="selectRecent('Alex Brown')">Alex Brown</div>
+        </div>
+    </div>
+    <div class="results" id="results"></div>
+    <script>
+        let recentSearchesVisible = false;
+        let cartCount = 0;
+
+        function toggleTheme() {
+            document.body.classList.toggle("dark-mode");
+        }
+
+        function showRecentSearches() {
+            document.getElementById("recentSearches").style.display = "block";
+            recentSearchesVisible = true;
+        }
+
+        function hideRecentSearches() {
+            setTimeout(() => {
+                if (!recentSearchesVisible) {
+                    document.getElementById("recentSearches").style.display = "none";
+                }
+            }, 200);
+        }
+
+        function selectRecent(name) {
+            document.getElementById("searchInput").value = name;
+            searchPeople();
+            recentSearchesVisible = false;
+        }
+
+        function clearSearch() {
+            document.getElementById("searchInput").value = "";
+            searchPeople();
+        }
+
+        function searchPeople() {
+            const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+            const results = document.getElementById("results");
+            const loader = document.getElementById("loader");
+            results.innerHTML = "";
+            loader.style.display = "inline-block";
+
+            setTimeout(() => {
+                const people = [
+                    { name: "John Doe", status: "Friend" },
+                    { name: "Jane Smith", status: "Mutual Friend" },
+                    { name: "Alex Brown", status: "Colleague" }
+                ];
+                loader.style.display = "none";
+                people.forEach(person => {
+                    if (person.name.toLowerCase().includes(searchTerm)) {
+                        const div = document.createElement("div");
+                        div.className = "result";
+                        div.innerHTML = `${person.name} - ${person.status}`;
+                        div.onmouseover = () => showPreview(div, person.name, person.status);
+                        div.onmouseout = () => hidePreview();
+                        results.appendChild(div);
+                    }
+                });
+            }, 1000); // Simulate search delay
+        }
+
+        function showPreview(resultDiv, name, status) {
+            let preview = resultDiv.querySelector(".preview");
+            if (!preview) {
+                preview = document.createElement("div");
+                preview.className = "preview";
+                preview.innerHTML = `<strong>${name}</strong><br>${status}<br>View Profile`;
+                resultDiv.appendChild(preview);
+            }
+            preview.style.display = "block";
+        }
+
+        function hidePreview() {
+            const previews = document.querySelectorAll(".preview");
+            previews.forEach(p => p.style.display = "none");
+        }
+
+        document.getElementById("recentSearches").addEventListener("mouseover", () => {
+            recentSearchesVisible = true;
+        });
+        document.getElementById("recentSearches").addEventListener("mouseout", () => {
+            recentSearchesVisible = false;
+        });
+    </script>
+</body>
+</html>
