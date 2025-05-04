@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mobile Banking Menu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5); /* Gradient background */
+            min-height: 100vh;
+            transition: background 0.3s;
+        }
+        .dark-mode {
+            background: linear-gradient(135deg, #2c3e50, #4ca1af); /* Dark mode gradient */
+            color: white;
+        }
+        h2 {
+            color: #333;
+        }
+        .dark-mode h2 {
+            color: white;
+        }
+        .menu {
+            display: flex;
+            justify-content: space-around;
+            width: 350px;
+            margin: auto;
+            flex-wrap: wrap;
+        }
+        .option {
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .option:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .option img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            padding: 5px;
+        }
+        .theme-toggle, .logout {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            background: #3498db;
+            color: white;
+            font-size: 14px;
+        }
+        .logout {
+            background: #e74c3c;
+        }
+        .dark-mode .option {
+            background: #444;
+            color: white;
+            border-color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h2>Mobile Banking</h2>
+    <button class="theme-toggle" onclick="toggleTheme()">Toggle Dark Mode</button>
+    <button class="logout" onclick="logout()">Logout</button>
+    <div class="menu">
+        <div class="option" onclick="navigate('Home')">
+            <img src="https://img.icons8.com/ios-filled/50/000000/home.png" alt="Home"> Home
+        </div>
+        <div class="option" onclick="navigate('Transfer')">
+            <img src="https://img.icons8.com/ios-filled/50/000000/money.png" alt="Transfer"> Transfer
+        </div>
+        <div class="option" onclick="navigate('History')">
+            <img src="https://img.icons8.com/ios-filled/50/000000/history.png" alt="History"> History
+        </div>
+        <div class="option" onclick="navigate('Balance')">
+            <img src="https://img.icons8.com/ios-filled/50/000000/wallet.png" alt="Balance"> Balance
+        </div>
+    </div>
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle("dark-mode");
+        }
+        function navigate(page) {
+            alert(`Navigating to ${page} page!`); // Simulated navigation
+        }
+        function logout() {
+            alert("You have logged out successfully!");
+        }
+    </script>
+</body>
+</html>
