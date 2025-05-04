@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>E-commerce Wireframe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #e6f0fa; /* Light blue background */
+            min-height: 100vh;
+            transition: background 0.5s;
+        }
+        body:hover {
+            background: #f0f4ff; /* Softer pastel blue on hover */
+        }
+        .dark-mode {
+            background: #2c3e50; /* Dark mode background */
+        }
+        .dark-mode:hover {
+            background: #3b4e6b; /* Slightly lighter dark on hover */
+        }
+        .header {
+            background: #34495e;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .dark-mode .header {
+            background: #1a252f;
+        }
+        .search-bar {
+            width: 50%;
+            padding: 8px;
+            margin: 10px auto;
+            display: block;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+        .search-bar:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .container {
+            display: flex;
+            padding: 20px;
+        }
+        .sidebar {
+            width: 20%;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .dark-mode .sidebar {
+            background: #444;
+            color: white;
+        }
+        .sidebar h3 {
+            margin-top: 0;
+        }
+        .filter-option {
+            cursor: pointer;
+            padding: 5px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .filter-option:hover {
+            background: #ddd;
+        }
+        .dark-mode .filter-option:hover {
+            background: #555;
+        }
+        .clear-btn, .theme-toggle {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .theme-toggle {
+            background: #3498db;
+        }
+        .product-grid {
+            width: 80%;
+            padding: 10px;
+        }
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .sort-select {
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .cart-counter {
+            background: #2ecc71;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+        .dark-mode .cart-counter {
+            background: #27ae60;
+        }
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .product {
+            width: 30%;
+            margin: 1%;
+            background: white;
+            border: 1px solid #ccc;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .dark-mode .product {
+            background: #555;
+            color: white;
+            border-color: #666;
+        }
+        .product:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Outdoor Gear Store</h1>
+        <input type="text" class="search-bar" id="searchInput" placeholder="Search for gear..." oninput="searchProducts()">
+    </div>
+    <div class="container">
+        <div class="sidebar">
+            <h3>Filters</h3>
+            <div class="filter-option" onclick="filterProducts('Tents')">Type: Tents</div>
+            <div class="filter-option" onclick="filterProducts('Bags')">Type: Bags</div>
+            <div class="filter-option" onclick="filterProducts('Price')">Price: Low to High</div>
+            <button class="theme-toggle" onclick="toggleTheme()">Toggle Dark Mode</button>
+            <button class="clear-btn" onclick="clearFilters()">Clear Filters</button>
+        </div>
+        <div class="product-grid">
+            <div class="product-header">
+                <select class="sort-select" onchange="sortProducts()">
+                    <option value="default">Sort by: Default</option>
+                    <option value="low-to-high">Price: Low to High</option>
+                    <option value="high-to-low">Price: High to Low</option>
+                </select>
+                <div class="cart-counter" id="cartCounter">Cart: 0</div>
+            </div>
+            <div class="product-list" id="productList">
+                <div class="product" data-type="Tents" data-price="50" onclick="addToCart('Product 1 (Tent)', 50)">
+                    Product 1 (Tent)<br>Price: $50
+                </div>
+                <div class="product" data-type="Bags" data-price="80" onclick="addToCart('Product 2 (Bag)', 80)">
+                    Product 2 (Bag)<br>Price: $80
+                </div>
+                <div class="product" data-type="Tents" data-price="120" onclick="addToCart('Product 3 (Tent)', 120)">
+                    Product 3 (Tent)<br>Price: $120
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let cartCount = 0;
+        let activeFilter = null;
+
+        function toggleTheme() {
+            document.body.classList.toggle("dark-mode");
+        }
+
+        function filterProducts(type) {
+            activeFilter = type;
+            const products = document.querySelectorAll(".product");
+            products.forEach(product => {
+                if (type === "Price") {
+                    product.classList.remove("hidden");
+                    sortProducts(); // Apply sorting if price filter is active
+                } else {
+                    product.classList.toggle("hidden", product.dataset.type !== type);
+                }
+            });
+            searchProducts(); // Reapply search after filtering
+        }
+
+        function clearFilters() {
+            activeFilter = null;
+            const products = document.querySelectorAll(".product");
+            products.forEach(product => {
+                product.classList.remove("hidden");
+            });
+            document.getElementById("searchInput").value = ""; // Clear search
+            document.getElementById("sortSelect").value = "default"; // Reset sort
+            searchProducts(); // Reapply search (which will show all)
+        }
+
+        function searchProducts() {
+            const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+            const products = document.querySelectorAll(".product");
+            products.forEach(product => {
+                const productName = product.textContent.toLowerCase();
+                const matchesSearch = productName.includes(searchTerm);
+                const matchesFilter = !activeFilter || activeFilter === "Price" || product.dataset.type === activeFilter;
+                product.classList.toggle("hidden", !(matchesSearch && matchesFilter));
+            });
+        }
+
+        function sortProducts() {
+            const sortValue = document.getElementById("sortSelect").value;
+            const productList = document.getElementById("productList");
+            const products = Array.from(productList.children);
+
+            products.sort((a, b) => {
+                const priceA = parseInt(a.dataset.price);
+                const priceB = parseInt(b.dataset.price);
+                if (sortValue === "low-to-high") return priceA - priceB;
+                if (sortValue === "high-to-low") return priceB - priceA;
+                return 0; // Default order
+            });
+
+            products.forEach(product => productList.appendChild(product));
+            searchProducts(); // Reapply search after sorting
+        }
+
+        function addToCart(productName, price) {
+            cartCount++;
+            document.getElementById("cartCounter").textContent = `Cart: ${cartCount}`;
+            alert(`${productName} ($${price}) added to cart! Total items: ${cartCount}`);
+        }
+
+        // Initialize sort select element
+        document.getElementById("sortSelect").value = "default";
+    </script>
+</body>
+</html>
