@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Banking UI Redesign</title>
+    <style>
+        body { font-family: Arial; text-align: center; }
+        .button { background: blue; color: white; padding: 10px; margin: 10px; cursor: pointer; }
+        .form { display: none; margin: 20px; }
+    </style>
+</head>
+<body>
+    <h2>Online Banking</h2>
+    <div class="button" onclick="showForm()">Transfer Money</div>
+    <div id="form" class="form">
+        <label>Amount: <input type="number" id="amount"></label><br>
+        <label>Friend's Account: <input type="text" id="account"></label><br>
+        <button onclick="submitTransfer()">Submit</button>
+    </div>
+    <p id="feedback"></p>
+    <script>
+        function showForm() {
+            document.getElementById("form").style.display = "block";
+            document.getElementById("feedback").innerText = "Please fill in transfer details.";
+        }
+        function submitTransfer() {
+            const amount = document.getElementById("amount").value;
+            const account = document.getElementById("account").value;
+            if (amount && account) {
+                document.getElementById("feedback").innerText = `Transfer of $${amount} to ${account} successful!`;
+            } else {
+                document.getElementById("feedback").innerText = "Error: Fill all fields.";
+            }
+        }
+    </script>
+</body>
+</html>
