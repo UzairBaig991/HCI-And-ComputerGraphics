@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Chat</title>
+    <style>
+        body {
+            background: #2c3e50;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chat-container {
+            width: 350px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .welcome-banner {
+            background: #e67e22;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+        }
+        .welcome-banner .close {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            cursor: pointer;
+        }
+        .chat-messages {
+            padding: 20px;
+            height: 400px;
+            overflow-y: auto;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 70%;
+        }
+        .bot-message {
+            background: #3498db;
+            color: white;
+            margin-left: 20px;
+        }
+        .user-message {
+            background: #f1c40f;
+            color: #333;
+            margin-right: 20px;
+            text-align: right;
+        }
+        .message-icon {
+            width: 20px;
+            height: 20px;
+            background: #ddd;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 5px;
+            vertical-align: middle;
+        }
+        .input-area {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+        .input-area input {
+            flex: 1;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .input-area button {
+            padding: 5px 10px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        .input-area .emoji {
+            width: 20px;
+            height: 20px;
+            background: #e74c3c;
+            border-radius: 50%;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="welcome-banner">
+            <span>Welcome to Live Chat!</span>
+            <span class="close" onclick="this.parentElement.style.display='none'">X</span>
+        </div>
+        <div class="chat-messages">
+            <div class="message bot-message">
+                <span class="message-icon"></span> 
+            </div>
+            <div class="message user-message">
+                <span class="message-icon"></span> 
+            </div>
+            <div class="message bot-message">
+                <span class="message-icon"></span>  :)
+            </div>
+        </div>
+        <div class="input-area">
+            <input type="text" placeholder="Please write your messages and press the Send button...">
+            <button>Send</button>
+            <div class="emoji"></div>
+        </div>
+    </div>
+    <script>
+        // Minimal script for close button functionality
+        document.querySelector('.close').addEventListener('click', function() {
+            this.parentElement.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
