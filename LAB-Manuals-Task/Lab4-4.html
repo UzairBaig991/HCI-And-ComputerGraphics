@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Time Logger</title>
+</head>
+<body>
+    <h2>Task Time Logger</h2>
+    <p>Click "Start Task" to begin, then "End Task" when done (e.g., after drawing a circle).</p>
+    <button onclick="startTask()">Start Task</button>
+    <button onclick="endTask()">End Task</button>
+    <p id="currentTask">Task 1</p>
+    <p id="results"></p>
+    <canvas id="learningCurve" width="400" height="200"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let task = 1;
+        let startTime;
+        let logData = [];
+        function startTask() {
+            if (task <= 5) {
+                startTime = performance.now();
+                document.getElementById("currentTask").innerText = `Task ${task}`;
+            }
+        }
+        function endTask() {
+            if (task <= 5 && startTime) {
+                const endTime = performance.now();
+                const timeTaken = (endTime - startTime) / 1000;
+                logData.push({task, timeTaken});
+                document.getElementById("results").innerText += `Task ${task}: ${timeTaken.toFixed(2)}s\n`;
+                task++;
+                if (task > 5) {
+                    plotLearningCurve();
+                } else {
+                    document.getElementById("currentTask").innerText = `Task ${task}`;
+                }
+            }
+        }
+        function plotLearningCurve() {
+            const ctx = document.getElementById("learningCurve").getContext("2d");
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: logData.map(d => `Task ${d.task}`),
+                    datasets: [{
+                        label: "Time Taken (s)",
+                        data: logData.map(d => d.timeTaken),
+                        borderColor: "blue",
+                        fill: false
+                    }]
+                },
+                options: {
+                    plugins: { title: { display: true, text: "Learning Curve for Drawing Tasks" } }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
