@@ -1,0 +1,20 @@
+import tkinter as tk
+tasks = []
+root = tk.Tk()
+root.title("Task Manager")
+task_list = tk.Listbox(root); task_list.pack()
+def add_task():
+    title, deadline = entry_title.get(), entry_deadline.get()
+    tasks.append(f"{title} - {deadline}")
+    task_list.insert(tk.END, tasks[-1])
+entry_title = tk.Entry(root); entry_title.pack()
+entry_deadline = tk.Entry(root); entry_deadline.pack()
+tk.Button(root, text="Add Task", command=add_task).pack()
+tk.Button(root, text="Delete Task", command=lambda: [tasks.pop(task_list.curselection()[0]), task_list.delete(task_list.curselection())] if task_list.curselection() else None).pack()
+menu_bar = tk.Menu(root)
+file_menu = tk.Menu(menu_bar, tearoff=0)
+file_menu.add_command(label="Save", command=lambda: print("Saving tasks..."))
+file_menu.add_command(label="Load", command=lambda: print("Loading tasks..."))
+menu_bar.add_cascade(label="File", menu=file_menu)
+root.config(menu=menu_bar)
+root.mainloop()
